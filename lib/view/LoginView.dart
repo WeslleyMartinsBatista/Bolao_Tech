@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+
+import "HomeView.dart";
+
 import 'dart:math' as math;
+
 import '../controller/LoginController.dart';
 
 class LoginView extends StatefulWidget {
@@ -34,7 +38,9 @@ class _LoginViewState extends State<LoginView> {
           // 1. O Background que acende apenas as escamas dentro da área invisível ativa
           Positioned.fill(
             child: CustomPaint(
-              painter: SoccerBackgroundPainter(activeAreaRect: _controller.activeAreaRect),
+              painter: SoccerBackgroundPainter(
+                activeAreaRect: _controller.activeAreaRect,
+              ),
             ),
           ),
           // 2. Interface do Formulário de Login
@@ -46,6 +52,14 @@ class _LoginViewState extends State<LoginView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Adicionando a Logo aqui
+                    Image.asset(
+                      'lib/resources/Logo_BolaoTech.png',
+                      height: 200,
+                      width: 200,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 20),
                     const Text(
                       'LOGIN',
                       style: TextStyle(
@@ -84,7 +98,9 @@ class _LoginViewState extends State<LoginView> {
                         backgroundColor: const Color(0xFF39FF14),
                         foregroundColor: Colors.black,
                         minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                       onPressed: _controller.isLoading
                           ? null
@@ -93,19 +109,31 @@ class _LoginViewState extends State<LoginView> {
                                 onStartLoading: () => setState(() {}),
                                 onResult: (sucesso) {
                                   setState(() {});
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(sucesso
-                                          ? 'Login efetuado com sucesso!'
-                                          : 'Email ou senha incorretos.'),
-                                    ),
-                                  );
+                                  if (sucesso) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const HomeView(),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Email ou senha incorretos.',
+                                        ),
+                                      ),
+                                    );
+                                  }
                                 },
                               );
                             },
                       child: _controller.isLoading
                           ? const CircularProgressIndicator(color: Colors.black)
-                          : const Text('ENTRAR', style: TextStyle(fontWeight: FontWeight.bold)),
+                          : const Text(
+                              'ENTRAR',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                     ),
                   ],
                 ),
@@ -122,7 +150,7 @@ class _LoginViewState extends State<LoginView> {
       labelText: label,
       labelStyle: const TextStyle(color: Colors.grey),
       filled: true,
-      fillColor: Colors.black.withOpacity(0.75),
+      fillColor: Colors.black.withValues(alpha: 0.75),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
@@ -153,7 +181,7 @@ class SoccerBackgroundPainter extends CustomPainter {
 
     // Configurações do neon
     final paintNeonBlur = Paint()
-      ..color = const Color(0xFF39FF14).withOpacity(0.6)
+      ..color = const Color(0xFF39FF14).withValues(alpha: 0.6)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8.0
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
@@ -163,7 +191,7 @@ class SoccerBackgroundPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0;
 
-    double radius = 35.0; // Reduzido ligeiramente para dar maior precisão de encaixe na caixa
+    double radius = 35.0;
     double hexWidth = radius * math.sqrt(3);
     double hexHeight = radius * 2;
 
@@ -174,17 +202,17 @@ class SoccerBackgroundPainter extends CustomPainter {
         double cy = y;
 
         Path hexPath = _getHexagonPath(cx, cy, radius);
-        
-        // Desenha a escama padrão (apagada)
+
         canvas.drawPath(hexPath, paintHexagon);
         canvas.drawPath(hexPath, paintLine);
 
-        // Se uma caixa de texto estiver focada, verifica se este hexágono está na área invisível
         if (activeAreaRect != null) {
-          // Cria uma caixa delimitadora para este hexágono específico
-          Rect hexBox = Rect.fromCenter(center: Offset(cx, cy), width: hexWidth, height: hexHeight);
-          
-          // Se a caixa do hexágono interceptar a área invisível expandida do input, acende ele!
+          Rect hexBox = Rect.fromCenter(
+            center: Offset(cx, cy),
+            width: hexWidth,
+            height: hexHeight,
+          );
+
           if (activeAreaRect!.overlaps(hexBox)) {
             canvas.drawPath(hexPath, paintNeonBlur);
             canvas.drawPath(hexPath, paintNeonCore);

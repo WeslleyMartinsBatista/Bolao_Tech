@@ -7,6 +7,7 @@ class MockDatabase {
       nome: "Antonio",
       email: "antonio@gmail.com",
       senha: "adm",
+      cargo: Cargo.Administrador
     ),
   ];
 }

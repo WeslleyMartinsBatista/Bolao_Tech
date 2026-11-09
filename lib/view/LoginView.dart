@@ -1,245 +1,220 @@
 import 'package:flutter/material.dart';
 
-import "HomeView.dart";
-
-import 'dart:math' as math;
-
-import '../controller/LoginController.dart';
-
 class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+  const LoginView({Key? key}) : super(key: key);
 
   @override
   State<LoginView> createState() => _LoginViewState();
 }
 
 class _LoginViewState extends State<LoginView> {
-  final LoginController _controller = LoginController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller.init(() {
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  // Paleta de Cores baseada na UI fornecida
+  static const Color backgroundColor = Color(0xFF121212);
+  static const Color cardBackgroundColor = Color(0xFF1E1E1E);
+  static const Color inputBackgroundColor = Color(0xFF262626);
+  static const Color primaryGreen = Color(0xFF00E676);
+  static const Color textSecondary = Color(0xFFA0A0A0);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // 1. O Background que acende apenas as escamas dentro da área invisível ativa
-          Positioned.fill(
-            child: CustomPaint(
-              painter: SoccerBackgroundPainter(
-                activeAreaRect: _controller.activeAreaRect,
-              ),
-            ),
-          ),
-          // 2. Interface do Formulário de Login
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(32.0),
-              child: SizedBox(
-                width: 400,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Adicionando a Logo aqui
-                    Image.asset(
+      backgroundColor: backgroundColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 40),
+              
+              // Logo Circular com a Imagem do Asset
+              Center(
+                child: Container(
+                  width: 96,
+                  height: 96,
+                  decoration: BoxDecoration(
+                    color: cardBackgroundColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: primaryGreen.withOpacity(0.3), width: 1.5),
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
                       'lib/resources/Logo_BolaoTech.png',
-                      height: 200,
-                      width: 200,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'LOGIN',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    // Campo de Email com chave e foco mapeados
-                    Container(
-                      key: _controller.emailKey,
-                      child: TextField(
-                        controller: _controller.emailController,
-                        focusNode: _controller.emailFocus,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: _inputDecoration('Email'),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    // Campo de Senha com chave e foco mapeados
-                    Container(
-                      key: _controller.passwordKey,
-                      child: TextField(
-                        controller: _controller.passwordController,
-                        focusNode: _controller.passwordFocus,
-                        obscureText: true,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: _inputDecoration('Senha'),
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF39FF14),
-                        foregroundColor: Colors.black,
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: _controller.isLoading
-                          ? null
-                          : () {
-                              _controller.efetuarLogin(
-                                onStartLoading: () => setState(() {}),
-                                onResult: (sucesso) {
-                                  setState(() {});
-                                  if (sucesso) {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const HomeView(),
-                                      ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Email ou senha incorretos.',
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                      child: _controller.isLoading
-                          ? const CircularProgressIndicator(color: Colors.black)
-                          : const Text(
-                              'ENTRAR',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(height: 24),
+              
+              // Título e Subtítulo
+              const Text(
+                'Bem-vindo de volta',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Entre para conferir os palpites e rodadas',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: textSecondary,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              // Campo de Email
+              const Text(
+                'E-mail',
+                style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _emailController,
+                style: const TextStyle(color: Colors.white),
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  hintText: 'Seu e-mail',
+                  hintStyle: const TextStyle(color: textSecondary, fontSize: 14),
+                  filled: true,
+                  fillColor: inputBackgroundColor,
+                  prefixIcon: const Icon(Icons.email_outlined, color: textSecondary),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: primaryGreen, width: 1.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Campo de Senha
+              const Text(
+                'Senha',
+                style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Sua senha',
+                  hintStyle: const TextStyle(color: textSecondary, fontSize: 14),
+                  filled: true,
+                  fillColor: inputBackgroundColor,
+                  prefixIcon: const Icon(Icons.lock_outline, color: textSecondary),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                      color: textSecondary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: primaryGreen, width: 1.5),
+                  ),
+                ),
+              ),
+
+              // Esqueceu a senha
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    'Esqueceu a senha?',
+                    style: TextStyle(color: textSecondary, fontSize: 13),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Botão Principal (Entrar)
+              ElevatedButton(
+                onPressed: () {
+                  // Ação de Login
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryGreen,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'ENTRAR',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Divider "ou"
+              Row(
+                children: const [
+                  Expanded(child: Divider(color: inputBackgroundColor, thickness: 1)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text('ou', style: TextStyle(color: textSecondary)),
+                  ),
+                  Expanded(child: Divider(color: inputBackgroundColor, thickness: 1)),
+                ],
+              ),
+              const SizedBox(height: 32),
+
+              // Registro / Criar Conta
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Não tem uma conta?',
+                    style: TextStyle(color: textSecondary),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Cadastre-se',
+                      style: TextStyle(
+                        color: primaryGreen,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
-  }
-
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(color: Colors.grey),
-      filled: true,
-      fillColor: Colors.black.withValues(alpha: 0.75),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Colors.white12),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Colors.white24),
-      ),
-    );
-  }
-}
-
-class SoccerBackgroundPainter extends CustomPainter {
-  final Rect? activeAreaRect;
-  SoccerBackgroundPainter({this.activeAreaRect});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paintHexagon = Paint()
-      ..color = const Color(0xFF121212)
-      ..style = PaintingStyle.fill;
-
-    final paintLine = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-
-    // Configurações do neon
-    final paintNeonBlur = Paint()
-      ..color = const Color(0xFF39FF14).withValues(alpha: 0.6)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 8.0
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
-
-    final paintNeonCore = Paint()
-      ..color = const Color(0xFF39FF14)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0;
-
-    double radius = 35.0;
-    double hexWidth = radius * math.sqrt(3);
-    double hexHeight = radius * 2;
-
-    for (double y = -radius; y < size.height + radius; y += hexHeight * 0.75) {
-      bool odd = ((y + radius) / (hexHeight * 0.75)).round() % 2 == 1;
-      for (double x = -hexWidth; x < size.width + hexWidth; x += hexWidth) {
-        double cx = x + (odd ? hexWidth / 2 : 0);
-        double cy = y;
-
-        Path hexPath = _getHexagonPath(cx, cy, radius);
-
-        canvas.drawPath(hexPath, paintHexagon);
-        canvas.drawPath(hexPath, paintLine);
-
-        if (activeAreaRect != null) {
-          Rect hexBox = Rect.fromCenter(
-            center: Offset(cx, cy),
-            width: hexWidth,
-            height: hexHeight,
-          );
-
-          if (activeAreaRect!.overlaps(hexBox)) {
-            canvas.drawPath(hexPath, paintNeonBlur);
-            canvas.drawPath(hexPath, paintNeonCore);
-          }
-        }
-      }
-    }
-  }
-
-  Path _getHexagonPath(double x, double y, double radius) {
-    Path path = Path();
-    for (int i = 0; i < 6; i++) {
-      double angle = (math.pi / 3) * i + (math.pi / 6);
-      double xPoint = x + radius * math.cos(angle);
-      double yPoint = y + radius * math.sin(angle);
-      if (i == 0) {
-        path.moveTo(xPoint, yPoint);
-      } else {
-        path.lineTo(xPoint, yPoint);
-      }
-    }
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldRepaint(covariant SoccerBackgroundPainter oldDelegate) {
-    return oldDelegate.activeAreaRect != activeAreaRect;
   }
 }

@@ -65,12 +65,14 @@ class MockDatabase {
   ];
 
   //Liga
-  static List<LigaModel> Ligas = [
+  static List<LigaModel> ligas = [
     LigaModel(
       id: "01",
       id_criador: "01",
       nome: "Antonio Clube",
-      token_acesso: "123",
+      token_acesso: "AAAA-0000",
     ),
   ];
+
+  //
 }

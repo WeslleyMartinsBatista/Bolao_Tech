@@ -1,4 +1,4 @@
-class Partidamodel {
+class PalpiteModel {
   String id;
   String idUser;
   String idPartida;
@@ -6,7 +6,7 @@ class Partidamodel {
   String palpiteB;
   String pontosGanhos;
 
-  Partidamodel({
+  PalpiteModel({
     required this.id,
     required this.idUser,
     required this.idPartida,

@@ -1,4 +1,4 @@
-enum Status { pendente, andamento, finalizado }
+enum Status { ABERTO, ANDAMENTO, FECHADO }
 
 class Partidamodel {
   String id;

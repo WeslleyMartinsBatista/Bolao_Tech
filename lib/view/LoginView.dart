@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'HomeView.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -39,7 +40,7 @@ class _LoginViewState extends State<LoginView> {
                   decoration: BoxDecoration(
                     color: cardBackgroundColor,
                     shape: BoxShape.circle,
-                    border: Border.all(color: primaryGreen.withOpacity(0.3), width: 1.5),
+                    border: Border.all(color: primaryGreen.withValues(alpha: 0.3), width: 1.5),
                   ),
                   child: ClipOval(
                     child: Image.asset(
@@ -157,6 +158,10 @@ class _LoginViewState extends State<LoginView> {
               ElevatedButton(
                 onPressed: () {
                   // Ação de Login
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomeView()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryGreen,

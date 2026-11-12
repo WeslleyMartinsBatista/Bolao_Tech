@@ -136,7 +136,7 @@ class LigaView extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: primaryGreen.withOpacity(0.15),
+                      color: primaryGreen.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
@@ -225,9 +225,9 @@ class LigaView extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: primaryGreen.withOpacity(0.1),
+                      color: primaryGreen.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
-                      border: Border.all(color: primaryGreen.withOpacity(0.4)),
+                      border: Border.all(color: primaryGreen.withValues(alpha: 0.4)),
                     ),
                     child: const Icon(
                       Icons.emoji_events_outlined,

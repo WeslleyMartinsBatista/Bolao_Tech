@@ -15,7 +15,6 @@ class _LoginViewState extends State<LoginView> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
-  // Paleta de cores idêntica à CadastroView
   static const Color _bgDark = Color(0xFF121212);
   static const Color _cardDark = Color(0xFF1E1E1E);
   static const Color _inputBg = Color(0xFF262626);

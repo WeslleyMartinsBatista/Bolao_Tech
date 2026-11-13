@@ -1,17 +1,40 @@
-import 'dart:async';
-
-import '../database/MockDatabase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginService {
-  // Simula uma autenticação no servidor consultando o MockDatabase
-  Future<bool> autenticar(String email, String password) async {
-    await Future.delayed(const Duration(seconds: 2)); // Simula delay de rede
+  final SupabaseClient _supabase = Supabase.instance.client;
 
-    // Verifica se existe algum usuário na lista do MockDatabase com o e-mail e senha correspondentes
-    bool usuarioValido = MockDatabase.usuarios.any(
-      (user) => user.email == email && user.senha == password,
-    );
+  /// Autentica o usuário consultando diretamente a tabela `usuarios` no Supabase
+  Future<bool> autenticar(String email, String senha) async {
+    try {
+      // Faz a consulta na tabela buscando o registro com o e-mail e senha informados
+      final response = await _supabase
+          .from('usuarios')
+          .select()
+          .eq('email', email.trim())
+          .eq('senha', senha.trim())
+          .maybeSingle();
 
-    return usuarioValido;
+      // Se encontrou um registro correspondente, o login é válido
+      return response != null;
+    } catch (e) {
+      print('Erro ao autenticar: $e');
+      return false;
+    }
+  }
+
+  /// Opcional: Busca os dados completos do usuário logado (incluindo o cargo)
+  Future<Map<String, dynamic>?> obterDadosUsuario(String email) async {
+    try {
+      final response = await _supabase
+          .from('usuarios')
+          .select()
+          .eq('email', email.trim())
+          .maybeSingle();
+
+      return response;
+    } catch (e) {
+      print('Erro ao buscar dados do usuário: $e');
+      return null;
+    }
   }
 }
